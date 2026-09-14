@@ -111,6 +111,9 @@ impl TemplateService {
 
             ],
 
+            // Las variables de entorno se añaden a mano (o importando un .env).
+            ItemType::Env=>vec![],
+
         }
 
     }

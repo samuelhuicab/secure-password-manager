@@ -4,6 +4,7 @@ use uuid::Uuid;
 
 use crate::{
     models::{
+        field::Field,
         item::VaultItem,
         item_type::ItemType,
     },
@@ -12,6 +13,15 @@ use crate::{
         vault_service::VaultService,
     },
 };
+
+fn slug(label: &str) -> String {
+    let s: String = label
+        .trim()
+        .chars()
+        .map(|c| if c.is_ascii_alphanumeric() { c.to_ascii_lowercase() } else { '_' })
+        .collect();
+    if s.is_empty() { "campo".to_string() } else { s }
+}
 
 pub struct ItemService;
 
@@ -174,6 +184,92 @@ impl ItemService {
 
         VaultService::save(app,&vault)
 
+    }
+
+    pub fn add_field(
+        app: &AppHandle,
+        item_id: String,
+        label: String,
+        hidden: bool,
+    ) -> Result<Field, String> {
+
+        let mut vault = VaultService::load(app)?;
+
+        let item = vault
+            .items
+            .iter_mut()
+            .find(|i| i.id == item_id)
+            .ok_or("Item no encontrado")?;
+
+        // Clave única dentro del item (los comandos buscan por `key`).
+        let base = slug(&label);
+        let mut key = base.clone();
+        let mut n = 2;
+        while item.fields.iter().any(|f| f.key == key) {
+            key = format!("{base}_{n}");
+            n += 1;
+        }
+
+        let field = Field {
+            id: uuid::Uuid::new_v4().to_string(),
+            key,
+            label,
+            value: String::new(),
+            hidden,
+        };
+
+        item.fields.push(field.clone());
+        item.updated_at = Utc::now().to_rfc3339();
+
+        VaultService::save(app, &vault)?;
+        Ok(field)
+    }
+
+    pub fn remove_field(
+        app: &AppHandle,
+        item_id: String,
+        field_id: String,
+    ) -> Result<(), String> {
+
+        let mut vault = VaultService::load(app)?;
+
+        let item = vault
+            .items
+            .iter_mut()
+            .find(|i| i.id == item_id)
+            .ok_or("Item no encontrado")?;
+
+        item.fields.retain(|f| f.id != field_id);
+        item.updated_at = Utc::now().to_rfc3339();
+
+        VaultService::save(app, &vault)
+    }
+
+    pub fn rename_field(
+        app: &AppHandle,
+        item_id: String,
+        field_id: String,
+        label: String,
+    ) -> Result<(), String> {
+
+        let mut vault = VaultService::load(app)?;
+
+        let item = vault
+            .items
+            .iter_mut()
+            .find(|i| i.id == item_id)
+            .ok_or("Item no encontrado")?;
+
+        let field = item
+            .fields
+            .iter_mut()
+            .find(|f| f.id == field_id)
+            .ok_or("Campo no encontrado")?;
+
+        field.label = label;
+        item.updated_at = Utc::now().to_rfc3339();
+
+        VaultService::save(app, &vault)
     }
 
     pub fn delete(

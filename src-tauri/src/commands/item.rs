@@ -2,6 +2,7 @@ use tauri::AppHandle;
 
 use crate::{
     models::{
+        field::Field,
         item::VaultItem,
         item_type::ItemType,
     },
@@ -118,6 +119,35 @@ pub fn update_item_field(
         value,
     )
 
+}
+
+#[tauri::command]
+pub fn add_item_field(
+    app: AppHandle,
+    item_id: String,
+    label: String,
+    hidden: bool,
+) -> Result<Field, String> {
+    ItemService::add_field(&app, item_id, label, hidden)
+}
+
+#[tauri::command]
+pub fn remove_item_field(
+    app: AppHandle,
+    item_id: String,
+    field_id: String,
+) -> Result<(), String> {
+    ItemService::remove_field(&app, item_id, field_id)
+}
+
+#[tauri::command]
+pub fn rename_item_field(
+    app: AppHandle,
+    item_id: String,
+    field_id: String,
+    label: String,
+) -> Result<(), String> {
+    ItemService::rename_field(&app, item_id, field_id, label)
 }
 
 #[tauri::command]

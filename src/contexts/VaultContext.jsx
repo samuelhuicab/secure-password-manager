@@ -1,7 +1,6 @@
 import { createContext, useContext, useEffect, useState } from "react";
 
 import {
-    initVault,
     getNodes,
     getItemsByNode,
     createNode as createNodeService,
@@ -60,8 +59,6 @@ export function VaultProvider({ children }) {
         try {
 
             setLoading(true);
-
-            await initVault();
 
             const data = await getNodes();
 

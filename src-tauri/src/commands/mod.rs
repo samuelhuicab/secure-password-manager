@@ -2,3 +2,8 @@ pub mod vault;
 pub mod node;
 pub mod item;
 pub mod search;
+pub mod auth;
+pub mod settings;
+pub mod secret;
+pub mod env;
+pub mod clipboard;

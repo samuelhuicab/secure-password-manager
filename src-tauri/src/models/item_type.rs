@@ -9,4 +9,5 @@ pub enum ItemType {
     Api,
     License,
     Note,
+    Env,
 }

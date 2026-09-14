@@ -2,11 +2,29 @@ import { useEffect, useState } from "react";
 
 import { getCurrentWindow } from "@tauri-apps/api/window";
 
-import { ShieldCheck } from "lucide-react";
+import { ShieldCheck, Settings, Wand2 } from "lucide-react";
 
 import SearchInput from "../ui/SearchInput";
 
-const appWindow = getCurrentWindow();
+import LockButton from "../security/LockButton";
+import SettingsModal from "../settings/SettingsModal";
+import SecretGenerator from "../dev/SecretGenerator";
+
+// En un navegador normal (sin Tauri) esto no existe: degradamos con no-ops
+// para poder previsualizar la UI.
+let appWindow;
+try {
+    appWindow = getCurrentWindow();
+} catch {
+    const noop = async () => {};
+    appWindow = {
+        isMaximized: async () => false,
+        onResized: async () => () => {},
+        minimize: noop,
+        toggleMaximize: noop,
+        close: noop,
+    };
+}
 
 function MinimizeIcon() {
 
@@ -69,6 +87,10 @@ function CloseIcon() {
 export default function Header() {
 
     const [isMaximized, setIsMaximized] = useState(false);
+
+    const [settingsOpen, setSettingsOpen] = useState(false);
+
+    const [genOpen, setGenOpen] = useState(false);
 
     useEffect(() => {
 
@@ -142,6 +164,8 @@ export default function Header() {
 
                     h-full
 
+                    shrink-0
+
                 "
 
             >
@@ -194,6 +218,10 @@ export default function Header() {
 
                         whitespace-nowrap
 
+                        hidden
+
+                        sm:block
+
                     "
 
                 >
@@ -208,7 +236,7 @@ export default function Header() {
 
                 data-tauri-drag-region
 
-                className="flex-1 h-full flex items-center justify-center px-4"
+                className="flex-1 min-w-0 h-full flex items-center justify-center px-3"
 
             >
 
@@ -217,6 +245,30 @@ export default function Header() {
             </div>
 
             <div className="flex items-center gap-0.5 pr-1.5 h-full shrink-0">
+
+                <button
+                    onClick={() => setGenOpen(true)}
+                    title="Generador de secretos"
+                    className="w-8 h-8 rounded-md flex items-center justify-center text-zinc-500 hover:bg-zinc-800 hover:text-zinc-200 transition-colors"
+                >
+                    <Wand2 size={13} />
+                </button>
+
+                <button
+                    onClick={() => setSettingsOpen(true)}
+                    title="Ajustes"
+                    className="w-8 h-8 rounded-md flex items-center justify-center text-zinc-500 hover:bg-zinc-800 hover:text-zinc-200 transition-colors"
+                >
+                    <Settings size={13} />
+                </button>
+
+                <LockButton />
+
+                <div className="w-px h-4 bg-zinc-800 mx-1" />
+
+                {settingsOpen && <SettingsModal onClose={() => setSettingsOpen(false)} />}
+
+                {genOpen && <SecretGenerator onClose={() => setGenOpen(false)} />}
 
                 <button
 

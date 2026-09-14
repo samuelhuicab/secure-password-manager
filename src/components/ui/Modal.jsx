@@ -37,6 +37,9 @@ export default function Modal({
                     rounded-xl
                     w-full
                     max-w-md
+                    max-h-[85vh]
+                    flex
+                    flex-col
                     shadow-2xl
                 "
 
@@ -49,6 +52,7 @@ export default function Modal({
                         py-4
                         border-b
                         border-zinc-800
+                        shrink-0
                     "
 
                 >
@@ -61,7 +65,7 @@ export default function Modal({
 
                 </div>
 
-                <div className="p-6">
+                <div className="p-6 overflow-y-auto">
 
                     {children}
 

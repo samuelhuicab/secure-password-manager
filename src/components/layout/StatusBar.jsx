@@ -40,7 +40,7 @@ export default function StatusBar() {
 
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
 
-                Vault local
+                Vault local · cifrado
 
             </div>
 

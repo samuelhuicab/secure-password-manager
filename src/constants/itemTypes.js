@@ -5,6 +5,7 @@ import {
     Globe,
     KeyRound,
     FileText,
+    Braces,
 } from "lucide-react";
 
 export const TYPE_ICON = {
@@ -16,6 +17,7 @@ export const TYPE_ICON = {
     Api: KeyRound,
     License: KeyRound,
     Note: FileText,
+    Env: Braces,
 
 };
 
@@ -28,6 +30,7 @@ export const TYPE_LABEL = {
     Api: "API",
     License: "Licencia",
     Note: "Nota",
+    Env: "Variables de entorno",
 
 };
 
